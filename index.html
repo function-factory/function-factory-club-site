@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>f(x) factory | 코딩 동아리</title>
+    <!-- Favicon setting -->
+    <style>
+      body {
+        margin: 0;
+        background-color: #000;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- HEADER -->
+    <header class="header" id="header">
+      <div class="container header-container">
+        <a href="#hero" class="logo">
+          <span>f(x)</span> factory
+        </a>
+        <nav class="nav">
+          <a href="#about" class="nav-link">ABOUT</a>
+          <a href="#news" class="nav-link">NEWS</a>
+          <a href="#projects" class="nav-link">PROJECTS</a>
+          <a href="#attendance" class="nav-link">ATTENDANCE</a>
+          <a href="#terminal-section" class="nav-link">SQL PLAYGROUND</a>
+          <a href="#game-section" class="nav-link">DEBUGGER</a>
+          <a href="#recruit" class="nav-link">RECRUIT</a>
+        </nav>
+        <a href="#recruit" class="cta-button">
+          Apply Now <i data-lucide="arrow-up-right"></i>
+        </a>
+      </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="hero" id="hero">
+      <div class="hero-video-fallback"></div>
+      <canvas class="hero-canvas" id="heroCanvas"></canvas>
+      <div class="hero-content">
+        <div class="hero-tag">Innovation & Execution</div>
+        <h1 class="hero-title">We Compile Our<br><span>Dreams Into Code.</span></h1>
+        <p class="hero-desc">
+          f(x) factory는 아이디어를 실행 가능한 가치로 함수 변환(transform)하는 중학생 코딩 동아리입니다. 
+          문제를 정의하고, 코드로 해결책을 구축하며, 한계를 뛰어넘습니다.
+        </p>
+        <div class="hero-actions">
+          <a href="#about" class="btn btn-primary">
+            Get Started <i data-lucide="chevron-right"></i>
+          </a>
+          <a href="#game-section" class="btn btn-secondary">
+            Solve Puzzle <i data-lucide="play"></i>
+          </a>
+        </div>
+      </div>
+      <div class="scroll-indicator">
+        <span>Scroll to explore</span>
+        <div class="scroll-mouse">
+          <div class="scroll-wheel"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT SECTION -->
+    <section class="section" id="about">
+      <div class="container">
+        <div class="about-grid">
+          <div class="about-text">
+            <span class="section-tag">About the factory</span>
+            <h2 class="section-title">우리는 상상을 실제로 구현합니다.</h2>
+            <p>
+              f(x) factory는 단순한 코딩 학습을 넘어 직접 사용할 수 있는 프로덕트(Product)를 빌드하는 데 집중합니다. 
+              우리는 배운 것을 나누고, 함께 문제를 해결하며, 혁신적이고 파괴적인 기술적 시도를 주저하지 않습니다.
+            </p>
+            <div class="core-values">
+              <div class="value-card">
+                <div class="value-title">F(x)</div>
+                <div class="value-desc"><strong>Formulation:</strong> 문제 상황을 관찰하고 수학적, 논리적 수식으로 정의합니다.</div>
+              </div>
+              <div class="value-card">
+                <div class="value-title">E(x)</div>
+                <div class="value-desc"><strong>Execution:</strong> 정의된 솔루션을 실제 작동하는 깨끗한 코드로 빠르게 실현합니다.</div>
+              </div>
+              <div class="value-card">
+                <div class="value-title">X(p)</div>
+                <div class="value-desc"><strong>eXpansion:</strong> 결과물에 그치지 않고 배움을 나누며 지식을 동료에게 전파합니다.</div>
+              </div>
+            </div>
+          </div>
+          <div class="about-stats">
+            <div class="stat-box">
+              <div class="stat-num" id="statMembers">6</div>
+              <div class="stat-label">Active Members</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-num" id="statProjects">4</div>
+              <div class="stat-label">Projects Built</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-num" id="statSessions">6</div>
+              <div class="stat-label">Total Sessions</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-num" id="statRate">92%</div>
+              <div class="stat-label">Avg Attendance</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CARD NEWS / NEWS SECTION -->
+    <section class="section" id="news">
+      <div class="container">
+        <div class="section-title-wrap">
+          <span class="section-tag">Card News</span>
+          <h2 class="section-title">동아리 소식 & 기술 블로그</h2>
+          <p class="section-desc">대학 사이트 감성의 최신 세미나 정보, 해커톤 참가 기록 및 개발 소식을 한눈에 모아보세요.</p>
+        </div>
+        <div class="filter-tabs" id="newsFilters">
+          <button class="filter-btn active" data-filter="all">전체보기</button>
+          <button class="filter-btn" data-filter="seminar">학술 세미나</button>
+          <button class="filter-btn" data-filter="project">프로젝트 소식</button>
+          <button class="filter-btn" data-filter="event">동아리 행사</button>
+        </div>
+        <div class="news-grid" id="newsGrid">
+          <!-- Dynamically populated from SQLite -->
+        </div>
+      </div>
+    </section>
+
+    <!-- CURRICULUM SECTION -->
+    <section class="section" id="curriculum">
+      <div class="container">
+        <div class="section-title-wrap text-center">
+          <span class="section-tag">Learning Track</span>
+          <h2 class="section-title">동아리 학습 로드맵</h2>
+          <p class="section-desc" style="margin: 0 auto;">동아리원들의 성장과 기술적 깊이를 위해 단계적이고 체계적인 자체 교육 과정을 운영합니다.</p>
+        </div>
+        <div class="curriculum-grid">
+          <div class="curr-card">
+            <div class="curr-track">Track 01</div>
+            <h3 class="curr-title">Frontend Engineering</h3>
+            <div class="curr-steps">
+              <div class="curr-step">
+                <div class="curr-step-num">1</div>
+                <div class="curr-step-text">HTML5/CSS3 레이아웃과 반응형 미니멀리즘 디자인 시스템 이해</div>
+              </div>
+              <div class="curr-step">
+                <div class="curr-step-num">2</div>
+                <div class="curr-step-text">JavaScript ES6+ 비동기 흐름 제어 및 Web API 조작 기법 마스터</div>
+              </div>
+              <div class="curr-step">
+                <div class="curr-step-num">3</div>
+                <div class="curr-step-text">TypeScript 정적 타입 가드와 React 프레임워크 기반 컴포넌트 실전 설계</div>
+              </div>
+            </div>
+          </div>
+          <div class="curr-card">
+            <div class="curr-track">Track 02</div>
+            <h3 class="curr-title">Backend & Database</h3>
+            <div class="curr-steps">
+              <div class="curr-step">
+                <div class="curr-step-num">1</div>
+                <div class="curr-step-text">Node.js Express 런타임을 사용한 RESTful API 구조 분석 및 라우팅 설계</div>
+              </div>
+              <div class="curr-step">
+                <div class="curr-step-num">2</div>
+                <div class="curr-step-text">관계형 데이터베이스(SQL) 기본 쿼리 및 DB 무결성 제약조건 기초 습득</div>
+              </div>
+              <div class="curr-step">
+                <div class="curr-step-num">3</div>
+                <div class="curr-step-text">WASM SQLite 등 첨단 엣지 데이터 저장 아키텍처 및 세션 보안 흐름 분석</div>
+              </div>
+            </div>
+          </div>
+          <div class="curr-card">
+            <div class="curr-track">Track 03</div>
+            <h3 class="curr-title">Algorithms & AI</h3>
+            <div class="curr-steps">
+              <div class="curr-step">
+                <div class="curr-step-num">1</div>
+                <div class="curr-step-text">자료구조(Stack, Queue, Tree) 시각화 및 정렬 알고리즘 복잡도 연산 분석</div>
+              </div>
+              <div class="curr-step">
+                <div class="curr-step-num">2</div>
+                <div class="curr-step-text">Python을 이용한 데이터 크롤링, 전처리 및 데이터 시각화 라이브러리 학습</div>
+              </div>
+              <div class="curr-step">
+                <div class="curr-step-num">3</div>
+                <div class="curr-step-text">PyTorch 기반의 합성곱 신경망(CNN) 기초 및 실전 이미지 분류 응용 모델 빌드</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECTS SECTION -->
+    <section class="section" id="projects">
+      <div class="container">
+        <div class="section-title-wrap">
+          <span class="section-tag">Our Builds</span>
+          <h2 class="section-title">프로젝트 쇼케이스</h2>
+          <p class="section-desc">우리가 직접 문제의 해답을 찾기 위해 밤새워 한 줄 한 줄 작성한 혁신적 프로덕트들입니다.</p>
+        </div>
+        <div class="project-grid" id="projectGrid">
+          <!-- Dynamically populated from SQLite -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ATTENDANCE & CHECK-IN SECTION -->
+    <section class="section" id="attendance">
+      <div class="container">
+        <div class="section-title-wrap">
+          <span class="section-tag">Status Board</span>
+          <h2 class="section-title">동아리원 출석 현황판</h2>
+          <p class="section-desc">세션 암호를 입력해 오늘 출석을 기록하고, 깃허브 커밋 잔디밭 형태로 수집된 출석률을 확인하세요.</p>
+        </div>
+        <div class="attendance-layout">
+          <!-- Attendance Graph Board -->
+          <div class="attendance-card">
+            <div class="attendance-title-box">
+              <div class="attendance-board-title">
+                <i data-lucide="git-commit"></i> Attendance Contributions
+              </div>
+              <div class="attendance-stats-summary" id="attendanceStatsSummary">
+                <!-- Stats dynamically calculated via SQL -->
+                Loading attendance statistics...
+              </div>
+            </div>
+            <div class="attendance-scroll-container">
+              <div class="grass-board" id="grassBoard">
+                <!-- Generated dynamically via Javascript and SQL.js -->
+              </div>
+            </div>
+            <div class="grass-legend">
+              <span>Less</span>
+              <div class="grass-legend-box" style="background-color: var(--border-color)"></div>
+              <div class="grass-legend-box" style="background-color: var(--accent-green-low)"></div>
+              <div class="grass-legend-box" style="background-color: var(--accent-green-mid)"></div>
+              <div class="grass-legend-box" style="background-color: var(--accent-green-high)"></div>
+              <div class="grass-legend-box" style="background-color: var(--accent-green)"></div>
+              <span>More (Present)</span>
+            </div>
+          </div>
+
+          <!-- Quick Check-in Panel -->
+          <div class="checkin-panel">
+            <div class="checkin-title">
+              <i data-lucide="check-circle-2"></i> Attendance Check-In
+            </div>
+            <form id="checkinForm">
+              <div class="form-group mb-4">
+                <label class="form-label" for="checkinMember">이름 선택</label>
+                <select class="form-select" id="checkinMember" required>
+                  <!-- Populated from SQLite members -->
+                </select>
+              </div>
+              <div class="form-group mb-4">
+                <label class="form-label" for="checkinCode">오늘의 출석 암호</label>
+                <input class="form-input" type="text" id="checkinCode" placeholder="동아리장이 공지한 코드 입력" required />
+              </div>
+              <button class="btn btn-primary" style="width: 100%" type="submit">
+                기록하기 <i data-lucide="arrow-right"></i>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INTERACTIVE SQL TERMINAL SECTION -->
+    <section class="section" id="terminal-section">
+      <div class="container">
+        <div class="section-title-wrap">
+          <span class="section-tag">Interactive Sandbox</span>
+          <h2 class="section-title">f(x) factory 데이터베이스 터미널</h2>
+          <p class="section-desc">브라우저 내 WebAssembly SQLite DB에 직접 SQL 명령어를 입력해보세요. 데이터 분석가처럼 동아리 데이터를 쿼리해낼 수 있습니다.</p>
+        </div>
+        
+        <!-- Interactive Terminal Shell -->
+        <div class="terminal-window">
+          <div class="terminal-header">
+            <div class="terminal-buttons">
+              <div class="terminal-btn close"></div>
+              <div class="terminal-btn minimize"></div>
+              <div class="terminal-btn maximize"></div>
+            </div>
+            <div class="terminal-title">sqlite3 - f_x_factory.db</div>
+            <div class="terminal-schema-info" id="toggleSchema">[스키마 테이블 정보 보기]</div>
+          </div>
+          
+          <!-- Schema Panel (Hidden by default) -->
+          <div class="schema-panel" id="schemaPanel">
+            <div class="schema-title">f_x_factory.db SCHEMA DEFINITION:</div>
+            <div class="schema-table-def">TABLE members (id INT, name TEXT, role TEXT, bio TEXT, github TEXT, join_date TEXT);</div>
+            <div class="schema-table-def">TABLE attendance (id INT, member_name TEXT, date TEXT, session_code TEXT, status TEXT);</div>
+            <div class="schema-table-def">TABLE sessions (id INT, date TEXT, code TEXT, topic TEXT);</div>
+            <div class="schema-table-def">TABLE projects (id INT, title TEXT, description TEXT, tech_stack TEXT, github_url TEXT, author TEXT, stars INT);</div>
+            <div class="schema-table-def">TABLE news (id INT, title TEXT, category TEXT, content TEXT, date TEXT);</div>
+            <div class="schema-table-def">TABLE applications (id INT, name TEXT, grade INT, email TEXT, introduction TEXT, status TEXT, created_at TEXT);</div>
+            <div style="margin-top: 8px; color: var(--text-muted);">예시 쿼리: SELECT * FROM members; | SELECT name, COUNT(*) FROM attendance GROUP BY name;</div>
+          </div>
+
+          <div class="terminal-body" id="terminalBody">
+            <div class="terminal-welcome">
+              <span class="terminal-welcome-accent">SQLite WebAssembly Version 1.8.0 Connected.</span><br>
+              f(x) factory 데이터베이스에 성공적으로 연결되었습니다. SQL 쿼리를 입력하세요.<br>
+              도움말이 필요하다면 <span style="color: #66d9ef;">help</span> 또는 <span style="color: #66d9ef;">schema</span>를 입력하고, 초기화하려면 <span style="color: #66d9ef;">clear</span>를 입력하십시오.
+            </div>
+            <div id="terminalHistory"></div>
+            <div class="terminal-prompt-row">
+              <span class="terminal-prompt">sqlite&gt;</span>
+              <div class="terminal-input-wrap">
+                <input class="terminal-input" type="text" id="terminalInput" placeholder="이곳에 SQL 쿼리 입력 후 Enter..." autocomplete="off" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CODE DEBUGGING PUZZLE SECTION -->
+    <section class="section" id="game-section">
+      <div class="container">
+        <div class="section-title-wrap">
+          <span class="section-tag">Mini Challenge</span>
+          <h2 class="section-title">컴파일러 검증: 버그 디버깅 퍼즐</h2>
+          <p class="section-desc">동아리 입부 테스트를 미리 경험해보세요. 깨진 함수의 버그를 분석하고 수정해 코드를 무사히 통과시키세요!</p>
+        </div>
+        <div class="code-game-layout">
+          <!-- Game Instructions -->
+          <div class="game-instructions">
+            <div class="game-card">
+              <div class="game-title">Mission: 홀수 합산 함수 복구하기</div>
+              <p class="game-desc">
+                아래 함수는 배열 `arr`을 받아 배열 속의 **홀수(Odd numbers)**들만 필터링하여 그 합계를 반환해야 합니다.<br>
+                하지만 현재 코드의 어딘가에 조건 연산자나 리턴 버그가 존재하여 원치 않는 결과가 계산되고 있습니다.<br>
+                코드를 자세히 살펴보고 버그를 수정하여 `Run Compiler` 버튼을 눌러 테스트 케이스를 통과시키세요!
+              </p>
+              <div class="game-bug-desc">
+                <strong>[기대 연산 결과]</strong><br>
+                배열 [1, 2, 3, 4, 5]를 입력했을 때 결과값은 1 + 3 + 5 = <strong>9</strong>여야 합니다.
+              </div>
+            </div>
+          </div>
+
+          <!-- Code Editor Panel -->
+          <div class="game-editor">
+            <div class="editor-header">
+              <div class="editor-tab">odd_sum.js</div>
+              <div class="editor-language">JavaScript (sandbox)</div>
+            </div>
+            <div class="editor-body">
+              <textarea class="editor-textarea" id="gameCode" spellcheck="false">function sumOfOdds(arr) {
+  let sum = 0;
+  for (let i = 0; i < arr.length; i++) {
+    // 버그 발생: 짝수(even)를 더하고 있거나 조건이 틀렸습니다!
+    if (arr[i] % 2 === 0) { 
+      sum += arr[i];
+    }
+  }
+  return sum;
+}
+
+// 이 함수를 최종 실행해 케이스를 체크합니다.
+sumOfOdds([1, 2, 3, 4, 5]);</textarea>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; background: #070707;">
+              <button class="editor-run-btn" id="runCodeBtn">
+                <i data-lucide="play" style="width: 14px; height: 14px;"></i> Run Compiler
+              </button>
+              <span id="gameSuccessBadge" style="margin-right: 18px; font-family: var(--font-mono); font-size: 0.8rem; display: none; color: #27c93f;">
+                [PASS] 테스트 통과 완료!
+              </span>
+            </div>
+            <div class="editor-output-box" id="gameOutput">
+Console Ready. Click Run Compiler...
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RECRUIT SECTION -->
+    <section class="section" id="recruit">
+      <div class="container">
+        <div class="section-title-wrap">
+          <span class="section-tag">Recruitment</span>
+          <h2 class="section-title">2026학년도 부원 모집 안내</h2>
+          <p class="section-desc">f(x) factory와 함께 다음 세대의 디지털 가치를 설계할 혁신적인 부원을 모집합니다.</p>
+        </div>
+        <div class="recruit-layout">
+          <!-- Left: Information & FAQ Accordion -->
+          <div class="recruit-info-box">
+            <div class="recruit-status-tag" id="recruitStatus">상태 계산 중...</div>
+            <div class="countdown-box" id="countdownBox">
+              <div class="countdown-label" id="countdownLabel">모집 기간까지 남은 시간</div>
+              <div class="countdown-timer">
+                <div class="countdown-item">
+                  <div class="countdown-num" id="cdDays">00</div>
+                  <div class="countdown-unit">Days</div>
+                </div>
+                <div class="countdown-item">
+                  <div class="countdown-num" id="cdHours">00</div>
+                  <div class="countdown-unit">Hours</div>
+                </div>
+                <div class="countdown-item">
+                  <div class="countdown-num" id="cdMins">00</div>
+                  <div class="countdown-unit">Mins</div>
+                </div>
+                <div class="countdown-item">
+                  <div class="countdown-num" id="cdSecs">00</div>
+                  <div class="countdown-unit">Secs</div>
+                </div>
+              </div>
+            </div>
+            <div style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5;">
+              <p><strong>모집 대상:</strong> 코딩에 열정이 가득한 재학생 누구나 (학년 무관)</p>
+              <p style="margin-top: 6px;"><strong>선발 방식:</strong> 본 온라인 지원서 제출 → 간단한 코딩 퀴즈/면접 → 최종 합격</p>
+            </div>
+
+            <!-- FAQ Accordion -->
+            <div class="faq-accordion">
+              <div class="faq-item">
+                <div class="faq-trigger">
+                  <span>Q. 코딩을 한 번도 안 해봤는데 지원 가능한가요?</span>
+                  <span class="faq-icon"><i data-lucide="chevron-down"></i></span>
+                </div>
+                <div class="faq-content">
+                  네, 전혀 상관없습니다! 코딩 지식 수준보다는 문제를 해결하려는 의지와 끈기, 동아리 활동에 정기적으로 참여할 수 있는 열정을 가장 중요하게 평가합니다.
+                </div>
+              </div>
+              <div class="faq-item">
+                <div class="faq-trigger">
+                  <span>Q. 동아리 세미나는 언제 진행되나요?</span>
+                  <span class="faq-icon"><i data-lucide="chevron-down"></i></span>
+                </div>
+                <div class="faq-content">
+                  매주 금요일 방과 후 과학실 혹은 동아리 컴퓨터실에서 정규 세미나 및 실습(1시간~1시간 반)이 진행됩니다.
+                </div>
+              </div>
+              <div class="faq-item">
+                <div class="faq-trigger">
+                  <span>Q. 지원 기간은 언제부터 언제까지인가요?</span>
+                  <span class="faq-icon"><i data-lucide="chevron-down"></i></span>
+                </div>
+                <div class="faq-content">
+                  현재 예정된 1차 공식 부원 모집 기간은 6월 10일부터 6월 25일까지입니다. 지원 폼은 해당 기간 동안만 열립니다. (개발 테스트용으로 날짜 조정을 통해 즉시 테스트해볼 수도 있습니다.)
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Recruitment Form (Active only during dates) -->
+          <div class="recruit-form-panel" id="recruitFormPanel">
+            <!-- Form content replaced dynamically if closed -->
+            <form id="recruitForm">
+              <h3 class="game-title" style="margin-bottom: 20px; font-size: 1.25rem;">동아리 가입 지원서 작성</h3>
+              <div class="form-group mb-4">
+                <label class="form-label" for="recruitName">이름</label>
+                <input class="form-input" type="text" id="recruitName" placeholder="성함 입력" required />
+              </div>
+              <div class="form-group mb-4">
+                <label class="form-label" for="recruitGrade">학년</label>
+                <select class="form-select" id="recruitGrade" required>
+                  <option value="1">1학년</option>
+                  <option value="2">2학년</option>
+                  <option value="3">3학년</option>
+                </select>
+              </div>
+              <div class="form-group mb-4">
+                <label class="form-label" for="recruitEmail">이메일 주소</label>
+                <input class="form-input" type="email" id="recruitEmail" placeholder="example@school.net" required />
+              </div>
+              <div class="form-group mb-4">
+                <label class="form-label" for="recruitIntro">동아리 지원 동기 및 자기소개 (자유서식)</label>
+                <textarea class="form-input" id="recruitIntro" rows="4" style="resize: vertical;" placeholder="이곳에 성실하게 적어주세요. 성실함이 최고의 코드입니다." required></textarea>
+              </div>
+              <div class="form-group mb-4">
+                <label class="form-label" for="recruitPortfolio">포트폴리오 혹은 깃허브 링크 (선택)</label>
+                <input class="form-input" type="url" id="recruitPortfolio" placeholder="https://..." />
+              </div>
+              <button class="btn btn-primary" style="width: 100%" type="submit">
+                지원서 제출 완료 <i data-lucide="send"></i>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="container footer-container">
+        <div class="footer-brand">
+          <h4><span>f(x)</span> factory</h4>
+          <p>We compile dreams and formulate realities. Innovation starts here.</p>
+          <div class="footer-socials">
+            <a href="https://github.com" class="footer-social-link" target="_blank">
+              <svg class="footer-social-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"></path><path d="M9 18c-4.51 2-5-2-7-2"></path></svg>
+            </a>
+            <a href="https://instagram.com" class="footer-social-link" target="_blank">
+              <svg class="footer-social-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line></svg>
+            </a>
+            <a href="#" class="footer-social-link"><i data-lucide="mail"></i></a>
+          </div>
+        </div>
+        <div class="footer-links">
+          <div class="footer-link-group">
+            <h5>Navigation</h5>
+            <ul>
+              <li><a href="#about">About</a></li>
+              <li><a href="#news">Card News</a></li>
+              <li><a href="#projects">Projects</a></li>
+              <li><a href="#attendance">Attendance</a></li>
+            </ul>
+          </div>
+          <div class="footer-link-group">
+            <h5>System Administration</h5>
+            <ul>
+              <li><a href="javascript:void(0)" id="exportDbBtn">Database Backup (.json)</a></li>
+              <li><a href="javascript:void(0)" id="importDbTrigger">Restore Database</a></li>
+              <li><a href="javascript:void(0)" id="resetDbBtn" style="color: var(--accent-red)">Database Reset</a></li>
+            </ul>
+            <input type="file" id="importDbFile" style="display: none;" accept=".json" />
+          </div>
+        </div>
+      </div>
+      <div class="container footer-bottom">
+        <p>&copy; 2026 f(x) factory Coding Club. Hosted on GitHub Pages. Powered by SQL.js (WASM).</p>
+        <p>Created by f(x) factory Core Dev Team.</p>
+      </div>
+    </footer>
+
+    <!-- APP MODAL OVERLAY -->
+    <div class="modal-overlay" id="appModal">
+      <div class="modal-content">
+        <button class="modal-close" id="closeModal">&times;</button>
+        <div class="modal-img" id="modalImg"></div>
+        <div class="modal-body">
+          <span class="modal-badge" id="modalCategory">BADGE</span>
+          <h3 class="modal-title" id="modalTitle">Modal Headline Title</h3>
+          <div class="modal-date" id="modalDate">2026-06-05</div>
+          <div class="modal-text" id="modalText">Modal body textual content goes here...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN APP SCRIPT -->
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
