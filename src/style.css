@@ -1692,5 +1692,5 @@ code, pre {
   .header-container { padding: 0 16px; }
   .nav { display: none; } /* Add a mobile drawer if necessary, otherwise simplify */
   .section { padding: 70px 0; }
-  .footer-links { gap: 40px; }
+  .footer-links { gap: 40px; } /* 야루 */
 }
