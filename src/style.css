@@ -576,6 +576,7 @@ code, pre {
   margin-bottom: 8px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2; /* 표준 속성 추가 */
   -webkit-box-orient: vertical;
   overflow: hidden;
   color: var(--text-primary);
@@ -587,6 +588,7 @@ code, pre {
   line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2; /* 표준 속성 추가 */
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -655,6 +657,7 @@ code, pre {
   margin-bottom: 16px;
   display: -webkit-box;
   -webkit-line-clamp: 3;
+  line-clamp: 3; /* 표준 속성 추가 */
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
