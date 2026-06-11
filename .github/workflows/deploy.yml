@@ -13,7 +13,7 @@ permissions:
 
 concurrency:
   group: "pages"
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -32,16 +32,22 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build with Vite
-        run: npm run build
+      - name: Type check
+        run: npx tsc --noEmit
 
-      - name: Upload artifact for Pages
+      - name: Build with Vite
+        run: npx vite build
+
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
 
   deploy:
-    name: Deploy to GitHub Pages
+    name: Deploy
     needs: build
     runs-on: ubuntu-latest
     environment:
