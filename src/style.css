@@ -1690,7 +1690,430 @@ code, pre {
   .about-grid { grid-template-columns: 1fr; gap: 40px; }
   .core-values { grid-template-columns: 1fr; }
   .header-container { padding: 0 16px; }
-  .nav { display: none; } /* Add a mobile drawer if necessary, otherwise simplify */
+  .nav { display: none; }
   .section { padding: 70px 0; }
   .footer-links { gap: 40px; }
 }
+
+/* ====================================================
+   PORTAL ACCESS BUTTON (Footer Lock Icon)
+==================================================== */
+.portal-access-btn {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+  flex-shrink: 0;
+}
+
+.portal-access-btn:hover {
+  border-color: var(--border-color-hover);
+  color: var(--text-secondary);
+}
+
+/* ====================================================
+   LOGIN MODAL (코드 인증)
+==================================================== */
+.login-modal-content {
+  max-width: 400px;
+  padding: 0;
+  overflow: visible;
+}
+
+.login-modal-body {
+  padding: 48px 40px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+}
+
+.login-icon {
+  width: 56px;
+  height: 56px;
+  border: 1px solid var(--border-color-hover);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  background: var(--bg-card);
+  margin-bottom: 4px;
+}
+
+.login-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+}
+
+.login-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.login-code-input {
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  letter-spacing: 0.15em;
+  width: 100%;
+}
+
+.login-error {
+  font-size: 0.8rem;
+  color: var(--accent-red);
+  background: rgba(218,54,60,0.08);
+  border: 1px solid rgba(218,54,60,0.2);
+  padding: 8px 14px;
+  border-radius: 6px;
+  width: 100%;
+}
+
+.login-cancel-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: var(--transition);
+}
+
+.login-cancel-btn:hover {
+  color: var(--text-secondary);
+}
+
+/* ====================================================
+   INTERNAL PORTAL (전체 화면 오버레이)
+==================================================== */
+.internal-portal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--bg-dark);
+  z-index: 3000;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(20px);
+  transition: opacity 0.4s cubic-bezier(0.16,1,0.3,1), transform 0.4s cubic-bezier(0.16,1,0.3,1);
+}
+
+.internal-portal.active {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+/* Portal Header */
+.portal-header {
+  height: 60px;
+  background-color: var(--bg-panel);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  gap: 20px;
+  flex-shrink: 0;
+}
+
+.portal-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.portal-logo {
+  font-weight: 800;
+  font-size: 1.1rem;
+  letter-spacing: -0.03em;
+}
+
+.portal-logo span {
+  font-family: var(--font-mono);
+  background: #fff;
+  color: #000;
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+
+.portal-badge {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  border: 1px solid var(--border-color);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* Portal Tabs */
+.portal-tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.portal-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.portal-tab {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  transition: var(--transition);
+  font-family: var(--font-sans);
+}
+
+.portal-tab:hover {
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+.portal-tab.active {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.portal-tab svg {
+  width: 13px;
+  height: 13px;
+}
+
+/* Portal Close Button */
+.portal-close-btn {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  transition: var(--transition);
+  font-family: var(--font-sans);
+}
+
+.portal-close-btn:hover {
+  border-color: var(--accent-red);
+  color: var(--accent-red);
+}
+
+.portal-close-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Portal Body */
+.portal-body {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Portal Pane (Tab Content) */
+.portal-pane {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.portal-pane.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.portal-pane-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 24px 60px;
+}
+
+/* ====================================================
+   APPLICATIONS LIST (지원서 목록)
+==================================================== */
+.applications-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.application-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 20px 24px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: center;
+  transition: var(--transition);
+}
+
+.application-card:hover {
+  border-color: var(--border-color-hover);
+}
+
+.application-info h4 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.application-meta {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.application-intro {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.application-status {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.status-badge {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.status-badge.pending { border-color: #555; color: #888; }
+.status-badge.accepted { border-color: var(--accent-green); color: var(--accent-green); }
+.status-badge.interview { border-color: #e6a817; color: #e6a817; }
+.status-badge.rejected { border-color: var(--accent-red); color: var(--accent-red); }
+
+.status-select {
+  background: var(--bg-dark);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.status-select:focus {
+  outline: none;
+  border-color: var(--accent-white);
+}
+
+.applications-empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-muted);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+/* ====================================================
+   DB MANAGEMENT CARDS
+==================================================== */
+.db-manage-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.db-manage-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: var(--transition);
+}
+
+.db-manage-card:hover {
+  border-color: var(--border-color-hover);
+}
+
+.db-manage-icon {
+  color: var(--text-secondary);
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.db-manage-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.db-manage-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.db-manage-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  flex: 1;
+}
+
