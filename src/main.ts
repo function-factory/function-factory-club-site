@@ -8,6 +8,7 @@ import {
   Mail, Play, Star
 } from 'lucide';
 import { dbInstance } from './utils/db';
+import { supabase } from './utils/supabaseClient';
 
 // =============================================================
 // CONSTANTS
@@ -518,7 +519,7 @@ function initDbManagement() {
     }
   });
 
-  document.getElementById('importMembersBtn')?.addEventListener('click', () => {
+  document.getElementById('importMembersBtn')?.addEventListener('click', async () => {
     const inputEl = document.getElementById('memberJsonInput') as HTMLTextAreaElement;
     if (!inputEl) return;
     const val = inputEl.value.trim();
@@ -533,10 +534,7 @@ function initDbManagement() {
         return;
       }
       
-      dbInstance.run('DELETE FROM members');
-      dbInstance.run("DELETE FROM sqlite_sequence WHERE name = 'members'");
-      
-      let count = 0;
+      const membersToInsert: any[] = [];
       const today = new Date().toISOString().split('T')[0];
       
       parsed.forEach((item: any) => {
@@ -557,26 +555,61 @@ function initDbManagement() {
         }
         
         if (name) {
-          dbInstance.run(
-            'INSERT INTO members (name, role, bio, github, join_date) VALUES (?, ?, ?, ?, ?)',
-            [name, role, bio, github, joinDate]
-          );
-          count++;
+          membersToInsert.push({
+            name, role, bio, github, join_date: joinDate
+          });
         }
       });
-      
-      // Update checkinMember dropdown
-      const select = document.getElementById('checkinMember') as HTMLSelectElement;
-      if (select) {
-        const members = dbInstance.query('SELECT name FROM members ORDER BY name ASC');
-        select.innerHTML = members.map(m => `<option value="${esc(m.name)}">${esc(m.name)}</option>`).join('');
+
+      if (membersToInsert.length === 0) {
+        alert('등록할 유효한 동아리원 이름이 없습니다.');
+        return;
       }
-      
-      renderPortalAttendance();
-      dbInstance.run('SELECT 1'); // trigger save and onUpdate
-      
-      alert(`성공적으로 ${count}명의 동아리원을 등록했습니다!`);
-      inputEl.value = '';
+
+      const btn = document.getElementById('importMembersBtn') as HTMLButtonElement;
+      const originalText = btn.innerText;
+      btn.innerText = '등록 중...';
+      btn.disabled = true;
+
+      try {
+        // 1. Delete all members from Supabase
+        await supabase.from('members').delete().neq('id', 0);
+        
+        // 2. Bulk insert into Supabase
+        const { data: insertedData, error } = await supabase.from('members').insert(membersToInsert).select();
+        if (error) throw error;
+        
+        // 3. Update local SQLite DB
+        dbInstance.run('DELETE FROM members');
+        dbInstance.run("DELETE FROM sqlite_sequence WHERE name = 'members'");
+        
+        if (insertedData) {
+          insertedData.forEach((row: any) => {
+            dbInstance.run(
+              'INSERT INTO members (id, name, role, bio, github, join_date) VALUES (?, ?, ?, ?, ?, ?)',
+              [row.id, row.name, row.role, row.bio, row.github, row.join_date]
+            );
+          });
+        }
+        
+        // Update checkinMember dropdown
+        const select = document.getElementById('checkinMember') as HTMLSelectElement;
+        if (select) {
+          const members = dbInstance.query('SELECT name FROM members ORDER BY name ASC');
+          select.innerHTML = members.map(m => `<option value="${esc(m.name)}">${esc(m.name)}</option>`).join('');
+        }
+        
+        renderPortalAttendance();
+        dbInstance.run('SELECT 1'); // trigger save and onUpdate
+        
+        alert(`성공적으로 ${membersToInsert.length}명의 동아리원을 등록했습니다!`);
+        inputEl.value = '';
+      } catch (err: any) {
+        alert(`Supabase 등록 중 오류가 발생했습니다: ${err.message}`);
+      } finally {
+        btn.innerText = originalText;
+        btn.disabled = false;
+      }
     } catch (err: any) {
       alert(`JSON 파싱 오류: ${err.message}`);
     }

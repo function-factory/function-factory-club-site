@@ -1,4 +1,4 @@
-// In-browser WebAssembly SQLite Database using sql.js
+import { supabase } from './supabaseClient';
 
 export interface DBRow {
   [key: string]: any;
@@ -29,25 +29,92 @@ export class ClubDatabase {
       locateFile: (file: string) => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}`
     });
 
-    // Check localStorage for saved database binary
-    const savedDb = localStorage.getItem('fx_factory_db_v2');
-    if (savedDb) {
-      try {
-        const u8arr = new Uint8Array(JSON.parse(savedDb));
-        this.db = new SQL.Database(u8arr);
-        console.log('Database loaded from localStorage.');
-        return;
-      } catch (e) {
-        console.error('Failed to restore saved database, creating new one.', e);
-      }
-    }
-
-    // Create a new database if none exists
+    // Create a new in-memory sandbox database
     this.db = new SQL.Database();
     this.createTables();
-    this.seedData();
-    this.save();
-    console.log('Database initialized and seeded.');
+
+    // Fetch and populate from Supabase
+    try {
+      console.log('Fetching database state from Supabase...');
+      const [
+        { data: members },
+        { data: attendance },
+        { data: sessions },
+        { data: projects },
+        { data: news },
+        { data: applications }
+      ] = await Promise.all([
+        supabase.from('members').select('*'),
+        supabase.from('attendance').select('*'),
+        supabase.from('sessions').select('*'),
+        supabase.from('projects').select('*'),
+        supabase.from('news').select('*'),
+        supabase.from('applications').select('*')
+      ]);
+
+      if (members) {
+        members.forEach((row: any) => {
+          this.db.run(
+            `INSERT INTO members (id, name, role, bio, github, join_date) VALUES (?, ?, ?, ?, ?, ?)`,
+            [row.id, row.name, row.role, row.bio, row.github, row.join_date]
+          );
+        });
+      }
+      if (attendance) {
+        attendance.forEach((row: any) => {
+          this.db.run(
+            `INSERT INTO attendance (id, member_name, date, session_code, status) VALUES (?, ?, ?, ?, ?)`,
+            [row.id, row.member_name, row.date, row.session_code, row.status]
+          );
+        });
+      }
+      if (sessions) {
+        sessions.forEach((row: any) => {
+          this.db.run(
+            `INSERT INTO sessions (id, date, code, topic) VALUES (?, ?, ?, ?)`,
+            [row.id, row.date, row.code, row.topic]
+          );
+        });
+      }
+      if (projects) {
+        projects.forEach((row: any) => {
+          this.db.run(
+            `INSERT INTO projects (id, title, description, tech_stack, github_url, author, stars) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+            [row.id, row.title, row.description, row.tech_stack, row.github_url, row.author, row.stars]
+          );
+        });
+      }
+      if (news) {
+        news.forEach((row: any) => {
+          this.db.run(
+            `INSERT INTO news (id, title, category, content, date, image_url) VALUES (?, ?, ?, ?, ?, ?)`,
+            [row.id, row.title, row.category, row.content, row.date, row.image_url]
+          );
+        });
+      }
+      if (applications) {
+        applications.forEach((row: any) => {
+          this.db.run(
+            `INSERT INTO applications (id, name, grade, email, introduction, portfolio, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            [row.id, row.name, row.grade, row.email, row.introduction, row.portfolio, row.status, row.created_at]
+          );
+        });
+      }
+      console.log('Database loaded and synced from Supabase.');
+    } catch (err) {
+      console.error('Failed to sync from Supabase, running local database only:', err);
+      // Try to load fallback from localStorage if offline
+      const savedDb = localStorage.getItem('fx_factory_db_v2');
+      if (savedDb) {
+        try {
+          const u8arr = new Uint8Array(JSON.parse(savedDb));
+          this.db = new SQL.Database(u8arr);
+          console.log('Loaded offline fallback from localStorage.');
+        } catch (e) {
+          console.error('Failed to restore offline fallback database.', e);
+        }
+      }
+    }
   }
 
   private loadScript(src: string): Promise<void> {
@@ -138,18 +205,81 @@ export class ClubDatabase {
     `);
   }
 
-  private seedData(): void {
-    // Database starts clean and empty.
-    // News, projects, and members should be added dynamically via admin interface or SQL terminal.
-  }
 
   // Run SQL query that modifies data
   run(sql: string, params: any[] = []): void {
     if (!this.db) throw new Error('Database not initialized.');
+    
+    // Execute on local SQLite sandbox
     this.db.run(sql, params);
+
+    // Sync to Supabase in the background
+    this.syncToSupabase(sql, params).catch(err => {
+      console.error('Failed to sync write to Supabase:', err);
+    });
+
     this.save();
     if (this.onUpdateCallback) {
       this.onUpdateCallback();
+    }
+  }
+
+  private async syncToSupabase(sql: string, params: any[]): Promise<void> {
+    const cleanSql = sql.trim().replace(/\s+/g, ' ');
+    const lower = cleanSql.toLowerCase();
+
+    try {
+      // 1. INSERT INTO attendance
+      if (lower.startsWith('insert into attendance')) {
+        const [name, date, code] = params;
+        await supabase.from('attendance').insert({
+          member_name: name,
+          date: date,
+          session_code: code,
+          status: 'Present'
+        });
+      }
+      // 2. INSERT INTO sessions
+      else if (lower.startsWith('insert into sessions')) {
+        const [date, code, topic] = params;
+        await supabase.from('sessions').insert({
+          date: date,
+          code: code,
+          topic: topic
+        });
+      }
+      // 3. DELETE FROM members
+      else if (lower.startsWith('delete from members')) {
+        await supabase.from('members').delete().neq('id', 0);
+      }
+      // 4. INSERT INTO members
+      else if (lower.startsWith('insert into members')) {
+        const [name, role, bio, github, join_date] = params;
+        await supabase.from('members').insert({
+          name, role, bio, github, join_date
+        });
+      }
+      // 5. UPDATE applications SET status = ? WHERE id = ?
+      else if (lower.startsWith('update applications')) {
+        const [status, id] = params;
+        await supabase.from('applications').update({ status }).eq('id', id);
+      }
+      // 6. UPDATE projects SET stars = stars + 1 WHERE id = ?
+      else if (lower.startsWith('update projects') && lower.includes('stars = stars + 1')) {
+        const [id] = params;
+        const { data } = await supabase.from('projects').select('stars').eq('id', id).single();
+        const stars = data ? (data.stars || 0) + 1 : 1;
+        await supabase.from('projects').update({ stars }).eq('id', id);
+      }
+      // 7. INSERT INTO applications
+      else if (lower.startsWith('insert into applications')) {
+        const [name, grade, email, intro, portfolio, created_at] = params;
+        await supabase.from('applications').insert({
+          name, grade, email, introduction: intro, portfolio, created_at
+        });
+      }
+    } catch (e) {
+      console.error('Supabase write error:', e);
     }
   }
 
@@ -203,7 +333,7 @@ export class ClubDatabase {
   }
 
   // Import DB from JSON backup
-  importData(jsonData: string): void {
+  async importData(jsonData: string): Promise<void> {
     try {
       const data = JSON.parse(jsonData);
       this.db.run(`DROP TABLE IF EXISTS members`);
@@ -214,41 +344,70 @@ export class ClubDatabase {
       this.db.run(`DROP TABLE IF EXISTS applications`);
       this.createTables();
 
+      // Clear Supabase tables
+      console.log('Clearing Supabase database to import backup...');
+      await Promise.all([
+        supabase.from('members').delete().neq('id', 0),
+        supabase.from('attendance').delete().neq('id', 0),
+        supabase.from('sessions').delete().neq('id', 0),
+        supabase.from('projects').delete().neq('id', 0),
+        supabase.from('news').delete().neq('id', 0),
+        supabase.from('applications').delete().neq('id', 0)
+      ]);
+
       if (data.members) {
-        data.members.forEach((row: any) => {
+        for (const row of data.members) {
           this.db.run(`INSERT INTO members (id, name, role, bio, github, join_date) VALUES (?, ?, ?, ?, ?, ?)`, 
             [row.id, row.name, row.role, row.bio, row.github, row.join_date]);
-        });
+          await supabase.from('members').insert({
+            id: row.id, name: row.name, role: row.role, bio: row.bio, github: row.github, join_date: row.join_date
+          });
+        }
       }
       if (data.sessions) {
-        data.sessions.forEach((row: any) => {
+        for (const row of data.sessions) {
           this.db.run(`INSERT INTO sessions (id, date, code, topic) VALUES (?, ?, ?, ?)`, 
             [row.id, row.date, row.code, row.topic]);
-        });
+          await supabase.from('sessions').insert({
+            id: row.id, date: row.date, code: row.code, topic: row.topic
+          });
+        }
       }
       if (data.projects) {
-        data.projects.forEach((row: any) => {
+        for (const row of data.projects) {
           this.db.run(`INSERT INTO projects (id, title, description, tech_stack, github_url, author, stars) VALUES (?, ?, ?, ?, ?, ?, ?)`, 
             [row.id, row.title, row.description, row.tech_stack, row.github_url, row.author, row.stars]);
-        });
+          await supabase.from('projects').insert({
+            id: row.id, title: row.title, description: row.description, tech_stack: row.tech_stack, github_url: row.github_url, author: row.author, stars: row.stars
+          });
+        }
       }
       if (data.attendance) {
-        data.attendance.forEach((row: any) => {
+        for (const row of data.attendance) {
           this.db.run(`INSERT INTO attendance (id, member_name, date, session_code, status) VALUES (?, ?, ?, ?, ?)`, 
             [row.id, row.member_name, row.date, row.session_code, row.status]);
-        });
+          await supabase.from('attendance').insert({
+            id: row.id, member_name: row.member_name, date: row.date, session_code: row.session_code, status: row.status
+          });
+        }
       }
       if (data.news) {
-        data.news.forEach((row: any) => {
+        for (const row of data.news) {
           this.db.run(`INSERT INTO news (id, title, category, content, date, image_url) VALUES (?, ?, ?, ?, ?, ?)`, 
             [row.id, row.title, row.category, row.content, row.date, row.image_url]);
-        });
+          await supabase.from('news').insert({
+            id: row.id, title: row.title, category: row.category, content: row.content, date: row.date, image_url: row.image_url
+          });
+        }
       }
       if (data.applications) {
-        data.applications.forEach((row: any) => {
+        for (const row of data.applications) {
           this.db.run(`INSERT INTO applications (id, name, grade, email, introduction, portfolio, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`, 
             [row.id, row.name, row.grade, row.email, row.introduction, row.portfolio, row.status, row.created_at]);
-        });
+          await supabase.from('applications').insert({
+            id: row.id, name: row.name, grade: row.grade, email: row.email, introduction: row.introduction, portfolio: row.portfolio, status: row.status, created_at: row.created_at
+          });
+        }
       }
       this.save();
       if (this.onUpdateCallback) {
