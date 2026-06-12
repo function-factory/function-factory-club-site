@@ -572,6 +572,15 @@ sumOfOdds([1, 2, 3, 4, 5]);</textarea>
                 <p class="db-manage-desc">모든 데이터를 삭제하고 초기 상태로 완전히 리셋합니다. 이 작업은 되돌릴 수 없습니다.</p>
                 <button class="btn btn-secondary" style="border-color: var(--accent-red); color: var(--accent-red);" id="resetDbBtn">초기화 실행</button>
               </div>
+              <div class="db-manage-card" style="grid-column: 1 / -1; margin-top: 20px;">
+                <div class="db-manage-icon"><i data-lucide="database"></i></div>
+                <h3 class="db-manage-title">동아리원 이름 등록 (JSON)</h3>
+                <p class="db-manage-desc">동아리원들의 이름을 JSON 배열 형식으로 입력하여 데이터베이스에 일괄 등록합니다. 기존 등록된 동아리원 정보는 모두 삭제되고 새로 등록됩니다.</p>
+                <div style="width: 100%; display: flex; flex-direction: column; gap: 12px; margin-top: 16px;">
+                  <textarea id="memberJsonInput" class="form-input" style="height: 120px; font-family: var(--font-mono); font-size: 0.85rem;" placeholder='예시: ["김민준", "이서연", "박지호", "최다은", "정우진", "윤아라"]'></textarea>
+                  <button class="btn btn-primary" id="importMembersBtn" style="align-self: flex-end;">등록하기</button>
+                </div>
+              </div>
             </div>
           </div>
         </div>

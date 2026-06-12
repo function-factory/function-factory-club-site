@@ -512,8 +512,73 @@ function initDbManagement() {
 
   document.getElementById('resetDbBtn')?.addEventListener('click', () => {
     if (confirm('⚠️ 모든 데이터를 초기화합니다. 되돌릴 수 없습니다.')) {
+      localStorage.removeItem('fx_factory_db_v2');
       localStorage.removeItem('fx_factory_db');
       window.location.reload();
+    }
+  });
+
+  document.getElementById('importMembersBtn')?.addEventListener('click', () => {
+    const inputEl = document.getElementById('memberJsonInput') as HTMLTextAreaElement;
+    if (!inputEl) return;
+    const val = inputEl.value.trim();
+    if (!val) {
+      alert('JSON 데이터를 입력해주세요.');
+      return;
+    }
+    try {
+      const parsed = JSON.parse(val);
+      if (!Array.isArray(parsed)) {
+        alert('JSON 데이터는 배열 형태여야 합니다 (예: ["홍길동", "이순신"]).');
+        return;
+      }
+      
+      dbInstance.run('DELETE FROM members');
+      dbInstance.run("DELETE FROM sqlite_sequence WHERE name = 'members'");
+      
+      let count = 0;
+      const today = new Date().toISOString().split('T')[0];
+      
+      parsed.forEach((item: any) => {
+        let name = '';
+        let role = '동아리원';
+        let bio = 'f(x) factory 동아리원';
+        let github = '';
+        let joinDate = today;
+        
+        if (typeof item === 'string') {
+          name = item.trim();
+        } else if (item && typeof item === 'object') {
+          name = (item.name || '').trim();
+          if (item.role) role = item.role.trim();
+          if (item.bio) bio = item.bio.trim();
+          if (item.github) github = item.github.trim();
+          if (item.join_date) joinDate = item.join_date.trim();
+        }
+        
+        if (name) {
+          dbInstance.run(
+            'INSERT INTO members (name, role, bio, github, join_date) VALUES (?, ?, ?, ?, ?)',
+            [name, role, bio, github, joinDate]
+          );
+          count++;
+        }
+      });
+      
+      // Update checkinMember dropdown
+      const select = document.getElementById('checkinMember') as HTMLSelectElement;
+      if (select) {
+        const members = dbInstance.query('SELECT name FROM members ORDER BY name ASC');
+        select.innerHTML = members.map(m => `<option value="${esc(m.name)}">${esc(m.name)}</option>`).join('');
+      }
+      
+      renderPortalAttendance();
+      dbInstance.run('SELECT 1'); // trigger save and onUpdate
+      
+      alert(`성공적으로 ${count}명의 동아리원을 등록했습니다!`);
+      inputEl.value = '';
+    } catch (err: any) {
+      alert(`JSON 파싱 오류: ${err.message}`);
     }
   });
 }
